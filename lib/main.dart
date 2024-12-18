@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxdemo/view/home_page.dart';
 
@@ -16,8 +17,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      home: HomePage(),
-    );
+    return GetMaterialApp(home: HomePage(), themeMode: ThemeMode.system, theme: ThemeData.light(), darkTheme: ThemeData.dark(), ro);
   }
 }

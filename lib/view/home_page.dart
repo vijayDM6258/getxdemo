@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
 import 'package:getxdemo/controller/home_controller.dart';
+import 'package:getxdemo/model/product_model.dart';
+import 'package:getxdemo/view/cart_page.dart';
 import 'package:getxdemo/view/detail_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -13,17 +16,65 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Badge(
+              label: Obx(() {
+                return Text("${controller.cartList.length}");
+              }),
+              isLabelVisible: controller.cartList.isNotEmpty,
+              child: IconButton(
+                onPressed: () {
+                  Get.to(CartPage());
+                },
+                icon: Icon(Icons.shopping_cart),
+              ),
+            ),
+          ),
+          IconButton(
+              onPressed: () {
+                Get.changeThemeMode(Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
+              },
+              icon: Icon(Icons.light))
+        ],
+      ),
       body: Column(
         children: [
-          TextFormField(
-            onChanged: (value) {
-              controller.text.value = value;
-            },
-            onFieldSubmitted: (value) {
-              controller.itemList.add(value);
-            },
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: controller.name,
+                  onChanged: (value) {
+                    controller.text.value = value;
+                  },
+                  decoration: InputDecoration(hintText: "Product Name"),
+                ),
+              ),
+              SizedBox(width: 20),
+              Expanded(
+                child: TextFormField(
+                  controller: controller.price,
+                  onChanged: (value) {
+                    controller.text.value = value;
+                  },
+                  decoration: InputDecoration(hintText: "Product Price"),
+                ),
+              ),
+            ],
           ),
+          ElevatedButton(
+              onPressed: () {
+                controller.itemList.add(ProductModel(
+                  name: controller.name.text,
+                  price: double.tryParse(controller.price.text),
+                ));
+                controller.name.clear();
+                controller.price.clear();
+              },
+              child: Text("Add Product")),
           Center(
             child: Obx(() => Text("Count is ${controller.count}")),
           ),
@@ -37,7 +88,11 @@ class HomePage extends StatelessWidget {
                 itemBuilder: (context, index) {
                   var item = controller.itemList[index];
                   return ListTile(
-                    title: Text("$item"),
+                    title: Text("${item.name}"),
+                    subtitle: Text("\$${item.price}"),
+                    onTap: () {
+                      controller.cartList.add(item);
+                    },
                     trailing: IconButton(
                         onPressed: () {
                           controller.itemList.removeAt(index);
