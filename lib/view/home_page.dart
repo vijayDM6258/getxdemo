@@ -27,7 +27,9 @@ class HomePage extends StatelessWidget {
               isLabelVisible: controller.cartList.isNotEmpty,
               child: IconButton(
                 onPressed: () {
-                  Get.to(CartPage());
+                  // Get.to(CartPage());
+                  Get.toNamed("CartPage");
+                  // Get.back();
                 },
                 icon: Icon(Icons.shopping_cart),
               ),
@@ -86,18 +88,28 @@ class HomePage extends StatelessWidget {
               return ListView.builder(
                 itemCount: controller.itemList.length,
                 itemBuilder: (context, index) {
-                  var item = controller.itemList[index];
+                  ProductModel item = controller.itemList[index];
                   return ListTile(
                     title: Text("${item.name}"),
                     subtitle: Text("\$${item.price}"),
                     onTap: () {
-                      controller.cartList.add(item);
+                      Get.to(() => DetailPage(), arguments: item);
                     },
-                    trailing: IconButton(
-                        onPressed: () {
-                          controller.itemList.removeAt(index);
-                        },
-                        icon: Icon(Icons.delete)),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              controller.cartList.add(item);
+                            },
+                            icon: Icon(Icons.add_shopping_cart)),
+                        IconButton(
+                            onPressed: () {
+                              controller.itemList.removeAt(index);
+                            },
+                            icon: Icon(Icons.delete)),
+                      ],
+                    ),
                   );
                 },
               );
